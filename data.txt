@@ -1,7 +1,0 @@
-new|your_email@email.com|pass
-web3|your_email@email.com|password2
-mnm|your_email@email.com|pass3
-222333|your_email@email.com|222
-adfd|your_email@email.com|22222
-123$|your_email@email.com|$iRNUct3FSp589#
-new|your_email@email.com|5Z4*x!LQKn9uhK(

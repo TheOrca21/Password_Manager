@@ -1,3 +1,4 @@
+import json
 from tkinter import *
 from tkinter import messagebox
 import random
@@ -31,19 +32,37 @@ def add():
     website = website_entry.get()
     username = email_entry.get()
     password = Pass_entry.get()
-
+    new_data = {website: {"email": username, 'password':password}}
     if website == "" or username == "" or password == "":
         messagebox.showerror(title='Error', message="You have left the necessary fields empty")
 
     else:
-        is_ok = messagebox.askokcancel(title=f"{website}", message=f"Details of data entered:\nEmail:{website}\nUsername:"
-                                                               f"{username}\nPassword:{password}, want to go ahead and save?")
-        if is_ok:
-            pyperclip.copy(password)
-            with open("data.txt", 'a') as file:
-                file.write(f"{website}|{username}|{password}\n")
-            website_entry.delete(0, END)
-            Pass_entry.delete(0, END)
+        pyperclip.copy(password)
+        data = {}
+        try:
+            with open("data.json", 'r') as file:
+                data = json.load(file)
+                data.update(new_data)
+        except FileNotFoundError:
+            data = new_data
+        finally:
+            with open('data.json', 'w') as file:
+                json.dump(data, file, indent=4)
+        website_entry.delete(0, END)
+        Pass_entry.delete(0, END)
+
+# ---------------------------- SAVE PASSWORD ------------------------------- #
+
+
+def search():
+    search_input = website_entry.get()
+    with open('data.json', 'r') as file:
+        data = json.load(file)
+    if search_input in data.keys():
+        details = data[search_input]
+        messagebox.showinfo(title=f'{search_input}', message=f"Email:{details['email']}\nPassword:{details['password']}")
+    else:
+        messagebox.showerror(title='Notfound', message='No such website found!')
 
 
 # ---------------------------- UI SETUP ------------------------------- #
@@ -60,8 +79,11 @@ website_label = Label(text='Website:')
 website_label.grid(row=1, column=0)
 
 website_entry = Entry(width=35)
-website_entry.grid(row=1, column=1, columnspan=2)
+website_entry.grid(row=1, column=1)
 website_entry.focus()
+
+search_button = Button(text='Search', command=search, width=12)
+search_button.grid(row=1, column=2)
 
 email_label = Label(text='Email/Username:')
 email_label.grid(row=2, column=0)
